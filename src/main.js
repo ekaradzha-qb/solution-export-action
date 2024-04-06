@@ -1,5 +1,5 @@
-const core = require('@actions/core')
-const { wait } = require('./wait')
+import { getInput, debug, setOutput, setFailed } from '@actions/core'
+import { wait } from './wait'
 
 /**
  * The main function for the action.
@@ -7,15 +7,15 @@ const { wait } = require('./wait')
  */
 async function run() {
   try {
-    const ms = core.getInput('milliseconds', { required: true })
+    const ms = getInput('milliseconds', { required: true })
 
     // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    debug(`Waiting ${ms} milliseconds ...`)
 
     // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
+    debug(new Date().toTimeString())
     await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    debug(new Date().toTimeString())
 
     const userToken = 'b6jcfp_nryt_1_d8fyfgwd7ka3575vwtm5cy332h3'
     const solutionId = '14b17764-d754-42e3-a5fa-2a4eaf6457d3'
@@ -26,10 +26,10 @@ async function run() {
       userToken
     )
     // Set outputs for other workflow steps to use
-    core.setOutput(resp)
+    setOutput(resp)
   } catch (error) {
     // Fail the workflow run if an error occurs
-    core.setFailed(error.message)
+    setFailed(error.message)
   }
 }
 
@@ -59,6 +59,6 @@ async function ExportSolution(
   return response
 }
 
-module.exports = {
+export default {
   run
 }
