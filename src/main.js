@@ -55,7 +55,7 @@ async function ExportSolution(
     }
   )
 
-  const response = await resp.blob().text()
+  const response = await resp.blob().text
   return response
 }
 
