@@ -17,12 +17,46 @@ async function run() {
     await wait(parseInt(ms, 10))
     core.debug(new Date().toTimeString())
 
+    const userToken = 'b6jcfp_nryt_1_d8fyfgwd7ka3575vwtm5cy332h3'
+    const solutionId = '14b17764-d754-42e3-a5fa-2a4eaf6457d3'
+    const resp = await ExportSolution(
+      solutionId,
+      '0.2',
+      'carbonprodtest',
+      userToken
+    )
     // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    core.setOutput(resp)
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)
   }
+}
+
+async function ExportSolution(
+  solutionId,
+  qblVersion,
+  realmHostname,
+  userToken
+) {
+  const headers = {
+    'QBL-Version': `${qblVersion}`,
+    'QB-Realm-Hostname': `${realmHostname}`,
+    'User-Agent': `GitHub action`,
+    Authorization: `QB-USER-TOKEN ${userToken}`,
+    'Content-Type': 'application/x-yaml'
+  }
+
+  const resp = await fetch(
+    `https://api.quickbase.com/v1/solutions/${solutionId}`,
+    {
+      method: 'GET',
+      headers
+    }
+  )
+
+  const respText = await resp.blob().text()
+  return respText
 }
 
 module.exports = {
