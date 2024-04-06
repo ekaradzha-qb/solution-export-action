@@ -13,7 +13,7 @@ async function run() {
 
     // Log the current timestamp, wait, then log the new timestamp
     core.debug(new Date().toTimeString())
-    await wait.wait(parseInt(ms, 10))
+    await wait(parseInt(ms, 10))
     core.debug(new Date().toTimeString())
 
     const userToken = 'b6jcfp_nryt_1_d8fyfgwd7ka3575vwtm5cy332h3'
