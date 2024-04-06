@@ -2727,6 +2727,8 @@ exports["default"] = _default;
 
 const core = __nccwpck_require__(186)
 const { wait } = __nccwpck_require__(312)
+const fs = __nccwpck_require__(147)
+
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
@@ -2734,14 +2736,6 @@ const { wait } = __nccwpck_require__(312)
 async function run() {
   try {
     const ms = core.getInput('milliseconds', { required: true })
-
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
-
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait.wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
 
     const userToken = 'b6jcfp_nryt_1_d8fyfgwd7ka3575vwtm5cy332h3'
     const solutionId = '14b17764-d754-42e3-a5fa-2a4eaf6457d3'
@@ -2752,8 +2746,11 @@ async function run() {
       userToken
     )
 
+    writeTextFile('solution.yaml', solutionYaml)
+    // console.debug('response of export call', solutionYaml)
+
     // Set outputs for other workflow steps to use
-    core.setOutput('yaml', solutionYaml)
+    core.setOutput('yaml', 'setOutput')
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)
@@ -2782,9 +2779,18 @@ async function exportSolution(
     }
   )
 
-  console.debug('response of export call', resp)
-  const response = await resp.text()
-  return response
+  return await resp.text()
+}
+
+function writeTextFile(filepath, output) {
+  fs.writeFile(filepath, output, err => {
+    if (err) console.log(err)
+    else {
+      console.log('File written successfully\n')
+      console.log('The written has the following contents:')
+      console.log(fs.readFileSync(filepath, 'utf8'))
+    }
+  })
 }
 
 module.exports = {

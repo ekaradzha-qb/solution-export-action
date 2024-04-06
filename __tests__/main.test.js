@@ -31,7 +31,7 @@ describe('action', () => {
       'carbonprodtest',
       userToken
     )
-    console.debug('resp', resp)
+    // console.debug('resp', resp)
     expect(resp).not.toBeNull()
   })
 
