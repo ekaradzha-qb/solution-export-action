@@ -2727,7 +2727,6 @@ exports["default"] = _default;
 
 const core = __nccwpck_require__(186)
 const { wait } = __nccwpck_require__(312)
-
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
@@ -2741,26 +2740,27 @@ async function run() {
 
     // Log the current timestamp, wait, then log the new timestamp
     core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
+    await wait.wait(parseInt(ms, 10))
     core.debug(new Date().toTimeString())
 
     const userToken = 'b6jcfp_nryt_1_d8fyfgwd7ka3575vwtm5cy332h3'
     const solutionId = '14b17764-d754-42e3-a5fa-2a4eaf6457d3'
-    const resp = await ExportSolution(
+    const solutionYaml = await exportSolution(
       solutionId,
       '0.2',
       'carbonprodtest',
       userToken
     )
+
     // Set outputs for other workflow steps to use
-    core.setOutput(resp)
+    core.setOutput('yaml', solutionYaml)
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)
   }
 }
 
-async function ExportSolution(
+async function exportSolution(
   solutionId,
   qblVersion,
   realmHostname,
@@ -2782,12 +2782,14 @@ async function ExportSolution(
     }
   )
 
-  const response = await resp.blob().text
+  console.debug('response of export call', resp)
+  const response = await resp.text()
   return response
 }
 
 module.exports = {
-  run
+  run,
+  exportSolution
 }
 
 

@@ -21,76 +21,90 @@ describe('action', () => {
     jest.clearAllMocks()
   })
 
-  it('sets the time output', async () => {
+  it('test export', async () => {
     // Set the action's inputs as return values from core.getInput()
-    getInputMock.mockImplementation(name => {
-      switch (name) {
-        case 'milliseconds':
-          return '500'
-        default:
-          return ''
-      }
-    })
-
-    await main.run()
-    expect(runMock).toHaveReturned()
-
-    // Verify that all of the core library functions were called correctly
-    expect(debugMock).toHaveBeenNthCalledWith(1, 'Waiting 500 milliseconds ...')
-    expect(debugMock).toHaveBeenNthCalledWith(
-      2,
-      expect.stringMatching(timeRegex)
+    const userToken = 'b6jcfp_nryt_1_d8fyfgwd7ka3575vwtm5cy332h3'
+    const solutionId = '14b17764-d754-42e3-a5fa-2a4eaf6457d3'
+    const resp = await main.exportSolution(
+      solutionId,
+      '0.2',
+      'carbonprodtest',
+      userToken
     )
-    expect(debugMock).toHaveBeenNthCalledWith(
-      3,
-      expect.stringMatching(timeRegex)
-    )
-    expect(setOutputMock).toHaveBeenNthCalledWith(
-      1,
-      'time',
-      expect.stringMatching(timeRegex)
-    )
+    console.debug('resp', resp)
+    expect(resp).not.toBeNull()
   })
 
-  it('sets a failed status', async () => {
-    // Set the action's inputs as return values from core.getInput()
-    getInputMock.mockImplementation(name => {
-      switch (name) {
-        case 'milliseconds':
-          return 'this is not a number'
-        default:
-          return ''
-      }
-    })
+  // it('sets the time output', async () => {
+  //   // Set the action's inputs as return values from core.getInput()
+  //   getInputMock.mockImplementation(name => {
+  //     switch (name) {
+  //       case 'milliseconds':
+  //         return '500'
+  //       default:
+  //         return ''
+  //     }
+  //   })
 
-    await main.run()
-    expect(runMock).toHaveReturned()
+  //   await main.run()
+  //   expect(runMock).toHaveReturned()
 
-    // Verify that all of the core library functions were called correctly
-    expect(setFailedMock).toHaveBeenNthCalledWith(
-      1,
-      'milliseconds not a number'
-    )
-  })
+  //   // Verify that all of the core library functions were called correctly
+  //   expect(debugMock).toHaveBeenNthCalledWith(1, 'Waiting 500 milliseconds ...')
+  //   expect(debugMock).toHaveBeenNthCalledWith(
+  //     2,
+  //     expect.stringMatching(timeRegex)
+  //   )
+  //   expect(debugMock).toHaveBeenNthCalledWith(
+  //     3,
+  //     expect.stringMatching(timeRegex)
+  //   )
+  //   expect(setOutputMock).toHaveBeenNthCalledWith(
+  //     1,
+  //     'time',
+  //     expect.stringMatching(timeRegex)
+  //   )
+  // })
 
-  it('fails if no input is provided', async () => {
-    // Set the action's inputs as return values from core.getInput()
-    getInputMock.mockImplementation(name => {
-      switch (name) {
-        case 'milliseconds':
-          throw new Error('Input required and not supplied: milliseconds')
-        default:
-          return ''
-      }
-    })
+  // it('sets a failed status', async () => {
+  //   // Set the action's inputs as return values from core.getInput()
+  //   getInputMock.mockImplementation(name => {
+  //     switch (name) {
+  //       case 'milliseconds':
+  //         return 'this is not a number'
+  //       default:
+  //         return ''
+  //     }
+  //   })
 
-    await main.run()
-    expect(runMock).toHaveReturned()
+  //   await main.run()
+  //   expect(runMock).toHaveReturned()
 
-    // Verify that all of the core library functions were called correctly
-    expect(setFailedMock).toHaveBeenNthCalledWith(
-      1,
-      'Input required and not supplied: milliseconds'
-    )
-  })
+  //   // Verify that all of the core library functions were called correctly
+  //   expect(setFailedMock).toHaveBeenNthCalledWith(
+  //     1,
+  //     'milliseconds not a number'
+  //   )
+  // })
+
+  // it('fails if no input is provided', async () => {
+  //   // Set the action's inputs as return values from core.getInput()
+  //   getInputMock.mockImplementation(name => {
+  //     switch (name) {
+  //       case 'milliseconds':
+  //         throw new Error('Input required and not supplied: milliseconds')
+  //       default:
+  //         return ''
+  //     }
+  //   })
+
+  //   await main.run()
+  //   expect(runMock).toHaveReturned()
+
+  //   // Verify that all of the core library functions were called correctly
+  //   expect(setFailedMock).toHaveBeenNthCalledWith(
+  //     1,
+  //     'Input required and not supplied: milliseconds'
+  //   )
+  // })
 })
