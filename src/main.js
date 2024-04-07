@@ -55,12 +55,12 @@ async function exportSolution(
     }
   )
   const result = await resp.text()
-  writeTextFile('solution.yaml', result)
+  await writeTextFile('solution.yaml', result)
   return result
 }
 
-function writeTextFile(filepath, output) {
-  fs.writeFile(filepath, output, err => {
+async function writeTextFile(filepath, output) {
+  await fs.writeFile(filepath, output, err => {
     if (err) console.log(err)
     else {
       console.log('File written successfully\n')
