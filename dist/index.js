@@ -19623,8 +19623,8 @@ async function run() {
     )
 
     // console.debug('response of export call', solutionYaml)
-    const resp = await uploadFileToGit()
-    console.log('response of upload to git call', resp)
+    // const resp = await uploadFileToGit()
+    // console.log('response of upload to git call', resp)
     // Set outputs for other workflow steps to use
     core.setOutput('yaml', 'setOutput')
   } catch (error) {
@@ -19655,12 +19655,14 @@ async function exportSolution(
     }
   )
   const result = await resp.text()
-  writeTextFile('solution.yaml', result)
+  await writeTextFile('solution.yaml', result)
+  const respGit = await uploadFileToGit()
+  console.log('response of upload to git call', respGit)
   return result
 }
 
-function writeTextFile(filepath, output) {
-  fs.writeFile(filepath, output, err => {
+async function writeTextFile(filepath, output) {
+  await fs.writeFile(filepath, output, err => {
     if (err) console.log(err)
     else {
       console.log('File written successfully\n')
