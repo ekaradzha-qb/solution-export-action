@@ -19680,7 +19680,8 @@ async function uploadFileToGit() {
     owner: 'ekaradzha-qb',
     repo: 'solution-export-action',
     title: 'test PR',
-    head: 'main'
+    head: 'main',
+    base: 'main'
   })
   // owner,
   //     repo,
