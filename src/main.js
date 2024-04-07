@@ -73,23 +73,20 @@ async function writeTextFile(filepath, output) {
 }
 
 async function uploadFileToGit() {
-  return await octokit.request(
-    'PUT /repos/ekaradzha-qb/solution-export-action/contents/',
-    {
-      owner: 'ekaradzha-qb',
-      repo: 'solution-export-action',
-      path: '.',
-      message: 'my commit message',
-      committer: {
-        name: 'Adding file',
-        email: 'ekaradzha@quickbase.com'
-      },
-      content: 'bXkgbmV3IGZpbGUgY29udGVudHM=',
-      headers: {
-        'X-GitHub-Api-Version': '2022-11-28'
-      }
+  return await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+    owner: 'ekaradzha-qb',
+    repo: 'solution-export-action',
+    path: '.',
+    message: 'my commit message',
+    committer: {
+      name: 'Adding file',
+      email: 'ekaradzha@quickbase.com'
+    },
+    content: 'bXkgbmV3IGZpbGUgY29udGVudHM=',
+    headers: {
+      'X-GitHub-Api-Version': '2022-11-28'
     }
-  )
+  })
 }
 
 module.exports = {
