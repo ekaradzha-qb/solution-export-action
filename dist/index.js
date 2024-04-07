@@ -19656,7 +19656,7 @@ async function exportSolution(
       headers
     }
   )
-  let result = await resp.text()
+  const result = await resp.text()
   writeTextFile('solution.yaml', result)
   return result
 }
