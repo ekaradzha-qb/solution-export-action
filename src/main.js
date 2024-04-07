@@ -10,6 +10,9 @@ const octokit = new Octokit({
   auth: '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'
 })
 
+const OWNER = 'ekaradzha-qb'
+const REPO = 'solution-export-action'
+const REF = 'heads/main'
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
@@ -75,18 +78,53 @@ async function writeTextFile(filepath, output) {
   })
 }
 
-async function uploadFileToGit() {
-  await octokit.rest.pulls.create({
-    owner: 'ekaradzha-qb',
-    repo: 'solution-export-action',
-    title: 'test PR',
-    head: 'main',
-    base: 'main'
+async function uploadFileToGit(solutionYaml) {
+  // Get reference to the latest commit in the main branch
+  const { data: refData } = await octokit.rest.git.getRef({
+    owner: OWNER,
+    repo: REPO,
+    ref: REF
   })
-  // owner,
-  //     repo,
-  //     head,
-  //     base,
+
+  // Create a new blob with the file content
+  const { data: blobData } = await octokit.rest.git.createBlob({
+    owner: OWNER,
+    repo: REPO,
+    content: solutionYaml
+  })
+
+  // Create a new tree with the new file
+  const { data: treeData } = await octokit.rest.git.createTree({
+    owner: OWNER,
+    repo: REPO,
+    base_tree: refData.object.sha,
+    tree: [
+      {
+        path: `solution.yaml`,
+        mode: '100644',
+        type: 'blob',
+        sha: blobData.sha
+      }
+    ]
+  })
+
+  // Create a new commit
+  const { data: commitData } = await octokit.rest.git.createCommit({
+    owner: OWNER,
+    repo: REPO,
+    message: `update solution`,
+    tree: treeData.sha,
+    parents: [refData.object.sha]
+  })
+
+  // Update the reference to point to the new commit
+  await octokit.rest.git.updateRef({
+    owner: OWNER,
+    repo: REPO,
+    ref: 'heads/main',
+    sha: commitData.sha
+  })
+
   //   return await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
   //   owner: 'ekaradzha-qb',
   //   repo: 'solution-export-action',
