@@ -1,6 +1,11 @@
 const core = require('@actions/core')
 const { wait } = require('./wait')
 const fs = require('fs')
+const { Octokit } = require('octokit')
+
+const octokit = new Octokit({
+  auth: process.env.TOKEN
+})
 
 /**
  * The main function for the action.
@@ -19,9 +24,9 @@ async function run() {
       userToken
     )
 
-
     // console.debug('response of export call', solutionYaml)
-
+    const resp = await uploadFileToGit()
+    console.debug('response of upload to git call', resp)
     // Set outputs for other workflow steps to use
     core.setOutput('yaml', 'setOutput')
   } catch (error) {
@@ -53,7 +58,7 @@ async function exportSolution(
   )
   let result = await resp.text()
   writeTextFile('solution.yaml', result)
-  return result;
+  return result
 }
 
 function writeTextFile(filepath, output) {
@@ -62,9 +67,29 @@ function writeTextFile(filepath, output) {
     else {
       console.log('File written successfully\n')
       console.log('The written has the following contents:')
-      console.log(fs.readFileSync(filepath, 'utf8'))
+      //console.log(fs.readFileSync(filepath, 'utf8'))
     }
   })
+}
+
+async function uploadFileToGit() {
+  return await octokit.request(
+    'PUT /repos/ekaradzha-qb/solution-export-action/contents/',
+    {
+      owner: 'ekaradzha-qb',
+      repo: 'solution-export-action',
+      path: '.',
+      message: 'my commit message',
+      committer: {
+        name: 'Adding file',
+        email: 'ekaradzha@quickbase.com'
+      },
+      content: 'bXkgbmV3IGZpbGUgY29udGVudHM=',
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    }
+  )
 }
 
 module.exports = {

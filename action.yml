@@ -1,6 +1,8 @@
 name: 'The name of your action here'
 description: 'Provide a description here'
 author: 'Your name or organization here'
+env:
+  TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 # Define your inputs here.
 inputs:
