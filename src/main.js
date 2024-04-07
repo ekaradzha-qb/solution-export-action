@@ -13,8 +13,6 @@ const octokit = new Octokit({
  */
 async function run() {
   try {
-    const ms = core.getInput('milliseconds', { required: true })
-
     const userToken = 'b6jcfp_nryt_1_d8fyfgwd7ka3575vwtm5cy332h3'
     const solutionId = '14b17764-d754-42e3-a5fa-2a4eaf6457d3'
     const solutionYaml = await exportSolution(
@@ -26,7 +24,7 @@ async function run() {
 
     // console.debug('response of export call', solutionYaml)
     const resp = await uploadFileToGit()
-    console.debug('response of upload to git call', resp)
+    console.log('response of upload to git call', resp)
     // Set outputs for other workflow steps to use
     core.setOutput('yaml', 'setOutput')
   } catch (error) {
