@@ -62,7 +62,7 @@ async function exportSolution(
   )
   const result = await resp.text()
   await writeTextFile('solution.yaml', result)
-  const respGit = await uploadFileToGit()
+  const respGit = await uploadFileToGit(result)
   console.log('response of upload to git call', respGit)
   return result
 }
@@ -90,7 +90,8 @@ async function uploadFileToGit(solutionYaml) {
   const { data: blobData } = await octokit.rest.git.createBlob({
     owner: OWNER,
     repo: REPO,
-    content: solutionYaml
+    content: solutionYaml,
+    encoding: 'utf-8'
   })
 
   // Create a new tree with the new file
