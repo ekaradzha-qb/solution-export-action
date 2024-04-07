@@ -1,0 +1,279 @@
+Solution:
+  Id: 14b17764-d754-42e3-a5fa-2a4eaf6457d3
+  Name: GITHUB Action test
+  Owner: ekaradzha@quickbase.com
+  ExportDate: 2024-04-07 09:16:13
+Version: 0.2
+Resources:
+  $App_GitHub_Action_test:
+    Type: QB::Application
+    Properties:
+      Name: GitHub Action test
+      Description: 
+      AppColor: '#72509a'
+      Manager: ekaradzha@quickbase.com
+      TableOrder:
+        - !Ref
+          Table: $Table_Wow
+      AppIcon: Application
+      CurrencySymbol: $
+      FiscalYearDesignation: Last
+      FirstDayOfWeek: Sun
+      DateFormat: MM-DD-YYYY
+      FirstMonthOfFiscalYear: Jan
+      CurrencySymbolPosition: Between
+      NumberFormat:
+        SeparatorStyle: CommaGroupingPeriodDecimal
+        SeparatorPlaces: none
+      DefaultViewMode: Auto
+      HideNewUpdatedIcons: false
+      DisableAllUsersSelection: false
+      CanCopyApp: Admin
+      CanExportData: Everyone
+      Searchable: false
+      RequireAppToken: true
+      ShowPerformanceBar: false
+      ShowPerformanceAnalyzer: false
+      GlobalSearchExactMatch: false
+      Utf8DataEncoding: false
+      Timezone: Default
+      Branding:
+        AppHeader:
+          UseCustom: false
+          HideQuickbaseStandardMenu: false
+        AppFooter:
+          UseCustom: false
+      RoleOrder:
+        - !Ref
+          Role: $Role_Viewer
+        - !Ref
+          Role: $Role_Participant
+        - !Ref
+          Role: $Role_Administrator
+    Tables:
+      $Table_Wow:
+        Type: QB::Table
+        Properties:
+          Name: Wow
+          Description: 
+          RecordNameSingular: Wow
+          RecordNamePlural: Wows
+          TableNameOverride: 
+          TableIconName: Table Header
+          SaveOnExit: true
+          Searchable: true
+          IndexFileAttachments: false
+          IncludeInTableBar: true
+          UseCustomRecordTitleField: false
+          KeyFieldID: !Ref
+            Field: $Field_Record_ID
+          DefaultRecordPicker: Default
+          CustomDataRules:
+            TurnedOn: false
+            Formula: 
+          RolePermissions:
+            $Role_Viewer:
+              CanAddRecords: false
+              CanDeleteRecords: false
+              CanSaveCommonReports: false
+              CanEditFieldProperties: false
+              CanViewRecords:
+                When: Always
+              CanModifyRecords:
+                When: Never
+            $Role_Participant:
+              CanAddRecords: true
+              CanDeleteRecords: true
+              CanSaveCommonReports: false
+              CanEditFieldProperties: false
+              CanViewRecords:
+                When: Always
+              CanModifyRecords:
+                When: Always
+            $Role_Administrator:
+              CanAddRecords: true
+              CanDeleteRecords: true
+              CanSaveCommonReports: true
+              CanEditFieldProperties: true
+              CanViewRecords:
+                When: Always
+              CanModifyRecords:
+                When: Always
+        Fields:
+          $Field_Text:
+            Type: QB::Field::Text
+            Id: 6
+            Properties:
+              DefaultValue: 
+              MaxLength: 0
+              Width: 0
+              EditHistory:
+                Enable: false
+                ExpandedHistory: false
+                PrependHistory: false
+                UseFullName: true
+                IncludeTime: false
+                IncludeTimeZone: false
+              Label: Text
+              AllowedInReports: true
+              IsSearchable: true
+              IsBold: false
+              DisplayWithoutWrapping: false
+              AddToAllNewReports: true
+              InputOptions:
+                InputType: UserInput
+              IsRequired: false
+              IsUnique: false
+              HelpText: 
+              AllowDataCopy: true
+          $Field_Date_Created:
+            Type: QB::Field::DateCreated
+            Id: 1
+            Properties:
+              ShowTime: true
+              ShowMonthAsAlpha: false
+              HideCurrentYear: false
+              ShowDayOfWeek: false
+              ShowTimeZone: false
+              Label: Date Created
+              AllowedInReports: true
+              IsSearchable: false
+              IsBold: false
+              DisplayWithoutWrapping: true
+              AddToAllNewReports: false
+              DefaultSortOrder: Ascending
+          $Field_Date_Modified:
+            Type: QB::Field::DateModified
+            Id: 2
+            Properties:
+              ShowTime: true
+              ShowMonthAsAlpha: false
+              HideCurrentYear: false
+              ShowDayOfWeek: false
+              ShowTimeZone: false
+              Label: Date Modified
+              AllowedInReports: true
+              IsSearchable: false
+              IsBold: false
+              DisplayWithoutWrapping: true
+              AddToAllNewReports: false
+              DefaultSortOrder: Ascending
+          $Field_Record_ID:
+            Type: QB::Field::RecordID
+            Id: 3
+            Properties:
+              Units: 
+              NumberFormat:
+                SeparatorStyle: CommaGroupingPeriodDecimal
+                SeparatorPlaces: none
+              SeparatorStart: 4
+              Label: Record ID#
+              AllowedInReports: true
+              IsSearchable: false
+              IsBold: false
+              DisplayWithoutWrapping: true
+              AddToAllNewReports: false
+          $Field_Record_Owner:
+            Type: QB::Field::RecordOwner
+            Id: 4
+            Properties:
+              DisplayAs: LastNameFirstName
+              Label: Record Owner
+              AllowedInReports: true
+              IsSearchable: true
+              IsBold: false
+              DisplayWithoutWrapping: true
+              AddToAllNewReports: false
+          $Field_Last_Modified_By:
+            Type: QB::Field::LastModifiedBy
+            Id: 5
+            Properties:
+              DisplayAs: LastNameFirstName
+              Label: Last Modified By
+              AllowedInReports: true
+              IsSearchable: true
+              IsBold: false
+              DisplayWithoutWrapping: true
+              AddToAllNewReports: false
+    Roles:
+      $Role_Viewer:
+        Type: QB::Application::Role
+        Properties:
+          Name: Viewer
+          Description: 
+          Default: false
+          ManageUsers: false
+          EditApp: false
+          DisableAccess: false
+          AppUI:
+            HideSettings: false
+            HideUsers: false
+            HideFavorites: false
+            HideSearch: false
+            HideHelp: false
+            HideTestAs: false
+          TableUI:
+            Global:
+              HideInBar: false
+              HideNewRecord: false
+              HideGridEdit: false
+              HideEmail: false
+              HidePrint: false
+              HideImportExport: false
+              HideSaveSpreadsheet: false
+              HideCreateCustomizeReport: false
+              HidePersonalSettings: false
+      $Role_Participant:
+        Type: QB::Application::Role
+        Properties:
+          Name: Participant
+          Description: 
+          Default: true
+          ManageUsers: true
+          EditApp: false
+          DisableAccess: false
+          AppUI:
+            HideSettings: false
+            HideUsers: false
+            HideFavorites: false
+            HideSearch: false
+            HideHelp: false
+            HideTestAs: false
+          TableUI:
+            Global:
+              HideInBar: false
+              HideNewRecord: false
+              HideGridEdit: false
+              HideEmail: false
+              HidePrint: false
+              HideImportExport: false
+              HideSaveSpreadsheet: false
+              HideCreateCustomizeReport: false
+              HidePersonalSettings: false
+      $Role_Administrator:
+        Type: QB::Application::Role
+        Properties:
+          Name: Administrator
+          Description: 
+          Default: false
+          ManageUsers: true
+          EditApp: true
+          DisableAccess: false
+          AppUI:
+            HideSettings: false
+            HideUsers: false
+            HideFavorites: false
+            HideSearch: false
+            HideHelp: false
+            HideTestAs: false
+          TableUI:
+            Global:
+              HideInBar: false
+              HideNewRecord: false
+              HideGridEdit: false
+              HideEmail: false
+              HidePrint: false
+              HideImportExport: false
+              HideSaveSpreadsheet: false
+              HideCreateCustomizeReport: false
+              HidePersonalSettings: false
