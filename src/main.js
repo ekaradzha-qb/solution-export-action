@@ -6,8 +6,8 @@ const { Octokit } = require('octokit')
 //hjghjgjhgjjghjghjghjgjjhgjg'
 const octokit = new Octokit({
   //auth: process.env.TOKEN
-    // //process.env.GITHUB_PERSONAL_TOKEN
-    auth: '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'
+  // //process.env.GITHUB_PERSONAL_TOKEN
+  auth: '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'
 })
 
 /**
@@ -76,16 +76,16 @@ async function writeTextFile(filepath, output) {
 }
 
 async function uploadFileToGit() {
- await octokit.rest.pulls.create({
-     owner: 'ekaradzha-qb',
-     repo: 'solution-export-action',
-     title: "test PR",
-     head: 'main'
- });
-    // owner,
-    //     repo,
-    //     head,
-    //     base,
+  await octokit.rest.pulls.create({
+    owner: 'ekaradzha-qb',
+    repo: 'solution-export-action',
+    title: 'test PR',
+    head: 'main'
+  })
+  // owner,
+  //     repo,
+  //     head,
+  //     base,
   //   return await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
   //   owner: 'ekaradzha-qb',
   //   repo: 'solution-export-action',

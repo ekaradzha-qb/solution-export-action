@@ -19602,9 +19602,12 @@ const core = __nccwpck_require__(2186)
 const { wait } = __nccwpck_require__(1312)
 const fs = __nccwpck_require__(7147)
 const { Octokit } = __nccwpck_require__(7467)
-
+//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
+//hjghjgjhgjjghjghjghjgjjhgjg'
 const octokit = new Octokit({
-  auth: process.env.TOKEN
+  //auth: process.env.TOKEN
+  // //process.env.GITHUB_PERSONAL_TOKEN
+  auth: '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'
 })
 
 /**
@@ -19673,20 +19676,30 @@ async function writeTextFile(filepath, output) {
 }
 
 async function uploadFileToGit() {
-  return await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+  await octokit.rest.pulls.create({
     owner: 'ekaradzha-qb',
     repo: 'solution-export-action',
-    path: '.',
-    message: 'my commit message',
-    committer: {
-      name: 'Adding file',
-      email: 'ekaradzha@quickbase.com'
-    },
-    content: 'bXkgbmV3IGZpbGUgY29udGVudHM=',
-    headers: {
-      'X-GitHub-Api-Version': '2022-11-28'
-    }
+    title: 'test PR',
+    head: 'main'
   })
+  // owner,
+  //     repo,
+  //     head,
+  //     base,
+  //   return await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+  //   owner: 'ekaradzha-qb',
+  //   repo: 'solution-export-action',
+  //   path: '.',
+  //   message: 'my commit message',
+  //   committer: {
+  //     name: 'Adding file',
+  //     email: 'ekaradzha@quickbase.com'
+  //   },
+  //   content: 'bXkgbmV3IGZpbGUgY29udGVudHM=',
+  //   headers: {
+  //     'X-GitHub-Api-Version': '2022-11-28'
+  //   }
+  // })
 }
 
 module.exports = {
