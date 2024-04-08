@@ -12,7 +12,6 @@ inputs:
     required: true
   pr_title:
     description: 'Title of the PR'
-    required: true
     default: 'Export solution version'
   repo:
     description: 'Repository to create PR in'
@@ -25,7 +24,6 @@ inputs:
     required: true
   branch_name:
     description: 'Branch name to create PR in'
-    required: true
     default: 'new-solution-version'
   owner:
     description: 'Owner of the repository'
@@ -36,6 +34,9 @@ inputs:
   owner_email:
     description: 'Owner email of the repository'
     required: true
+  qbl_version:
+    description: 'Quickbase QBL version'
+    default: '0.2'
 
 # Define your outputs here.
 outputs:
