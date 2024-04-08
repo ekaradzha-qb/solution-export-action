@@ -3,6 +3,7 @@
  */
 const core = require('@actions/core')
 const main = require('../src/main')
+const expect = require('expect')
 
 // Mock the GitHub Actions core library
 const debugMock = jest.spyOn(core, 'debug').mockImplementation()
@@ -32,7 +33,7 @@ describe('action', () => {
       userToken
     )
     // console.debug('resp', resp)
-    //expect(resp).not.toBeNull()
+    expect(resp).not.toBeNull()
   })
 
   // it('sets the time output', async () => {
