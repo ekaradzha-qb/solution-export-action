@@ -42202,10 +42202,14 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     })
   } catch (e) {
     console.error(e.message)
-    console.log('PR failed')
+    console.error(`Some logs: ${title}, ${branchName}`)
+    console.log(`PR failed: ${e.message}`)
+    console.info('this is  console.info')
+    info('this is  only info')
 
     return
   }
+
   console.log('PR created')
 }
 
