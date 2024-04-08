@@ -73,18 +73,16 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       return pr
     }
 
-    let response = await rest.repos.listCommits({
+    let listCommitResponse = await rest.repos.listCommits({
       owner,
       repo,
       per_page: 1
     })
 
-    const latestCommitSha = response.data[0].sha
-    const treeSha = response.data[0].commit.tree.sha
     const createTreeResponse = await rest.git.createTree({
       owner,
       repo,
-      base_tree: treeSha,
+      base_tree: listCommitResponse.data[0].commit.tree.sha,
       tree: [{ path: QBL_FILENAME, mode: '100644', content: solutionYaml }]
     })
 
@@ -93,7 +91,7 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       repo,
       message: 'Latest QBL version',
       tree: createTreeResponse.data.sha,
-      parents: [latestCommitSha],
+      parents: [listCommitResponse.data[0].sha],
       author: {
         name: OWNER_NAME,
         email: OWNER_EMAIL
