@@ -123,55 +123,6 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
   console.info('PR created')
 }
 
-async function uploadFileToGit(solutionYaml, gitRef) {
-  // Get reference to the latest commit in the main branch
-  const { data: refData } = await rest.git.getRef({
-    owner,
-    repo,
-    ref: gitRef
-  })
-
-  // Create a new blob with the file content
-  const { data: blobData } = await rest.git.createBlob({
-    owner,
-    repo,
-    content: solutionYaml,
-    encoding: 'utf-8'
-  })
-
-  // Create a new tree with the new file
-  const { data: treeData } = await rest.git.createTree({
-    owner,
-    repo,
-    base_tree: refData.object.sha,
-    tree: [
-      {
-        path: QBL_FILENAME,
-        mode: '100644',
-        type: 'blob',
-        sha: blobData.sha
-      }
-    ]
-  })
-
-  // Create a new commit
-  const { data: commitData } = await rest.git.createCommit({
-    owner,
-    repo,
-    message: `adding commit`,
-    tree: treeData.sha,
-    parents: [refData.object.sha]
-  })
-
-  // Update the reference to point to the new commit
-  await rest.git.updateRef({
-    owner,
-    repo,
-    ref: gitRef,
-    sha: commitData.sha
-  })
-}
-
 function GetHeadSurfix() {
   return new Date()
     .toISOString()
