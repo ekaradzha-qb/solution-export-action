@@ -32,10 +32,6 @@ async function run() {
     )
 
     await createOrUpdatePullRequest(PR_TITLE, head, solutionYaml)
-    // console.debug('response of export call', solutionYaml)
-    // const resp = await uploadFileToGit()
-    // console.log('response of upload to git call', resp)
-    // Set outputs for other workflow steps to use
     core.setOutput('yaml', 'setOutput')
   } catch (error) {
     // Fail the workflow run if an error occurs
