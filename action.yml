@@ -40,8 +40,7 @@ inputs:
     description: 'Quickbase QBL version'
     default: '0.2'
   qbl_filename:
-    description:
-      'Filename for the QBL file the will be checked in the repository'
+    description: 'Filename for the QBL file the will be checked in the repository'
     default: 'solution_qbl.yaml'
   qb_solution_id:
     description: 'ID of solution to export'
