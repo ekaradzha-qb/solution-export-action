@@ -42047,7 +42047,6 @@ function wrappy (fn, cb) {
 
 const core = __nccwpck_require__(2186)
 const { context } = __nccwpck_require__(5438)
-// const { wait } = require('./wait')
 const fs = __nccwpck_require__(7147)
 const { Octokit } = __nccwpck_require__(7467)
 
@@ -42055,25 +42054,28 @@ const octokit = new Octokit({
   auth: process.env.GITHUB_PERSONAL_TOKEN
 })
 
-const PR_TITLE = 'New solution version'
+const PR_TITLE = core.getInput('pr_title')
 const MAIN = 'main'
-const repo = 'solution-export-action'
-const owner = 'ekaradzha-qb'
-const mainRef = 'heads/main'
+const repo = core.getInput('repo') //'solution-export-action'
+const owner = core.getInput('owner') //'ekaradzha-qb'
+const owner_name = core.getInput('owner_name') //'ekaradzha-qb'
+const owner_email = core.getInput('owner_email') //'ekaradzha-qb'
 const head = 'new-solution-qbl-version' // + Math.random().toString(36).substr(2, 5)
+const SOLUTION_ID = core.getInput('solution_id')
+const QB_TK = core.getInput('qb_tk')
+const QB_REALM = core.getInput('qb_realm')
+const BRANCH_NAME = core.getInput('branch_name')
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 async function run() {
   try {
-    const solutionUTK = 'b6jcfp_nryt_1_d8fyfgwd7ka3575vwtm5cy332h3'
-    const solutionId = '14b17764-d754-42e3-a5fa-2a4eaf6457d3'
     const solutionYaml = await exportSolution(
-      solutionId,
+      SOLUTION_ID,
       '0.2',
-      'carbonprodtest',
-      solutionUTK
+      QB_REALM,
+      QB_TK
     )
 
     await createOrUpdatePullRequest(PR_TITLE, head, solutionYaml)
@@ -42088,17 +42090,12 @@ async function run() {
   }
 }
 
-async function exportSolution(
-  solutionId,
-  qblVersion,
-  realmHostname,
-  userToken
-) {
+async function exportSolution(solutionId, qblVersion, realmHostname, qbTk) {
   const headers = {
     'QBL-Version': `${qblVersion}`,
     'QB-Realm-Hostname': `${realmHostname}`,
     'User-Agent': `GitHub action`,
-    Authorization: `QB-USER-TOKEN ${userToken}`,
+    Authorization: `QB-USER-TOKEN ${qbTk}`,
     'Content-Type': 'application/x-yaml'
   }
 
@@ -42112,23 +42109,23 @@ async function exportSolution(
   const result = await resp.text()
   //await writeTextFile('solution.yaml', result)
 
-  const pr = await createOrUpdatePullRequest(PR_TITLE, 'my-test-branch', result)
+  const pr = await createOrUpdatePullRequest(PR_TITLE, BRANCH_NAME, result)
 
   const respGit = await uploadFileToGit(result, pr.head.ref)
   console.log('response of upload to git call', respGit)
   return result
 }
 
-async function writeTextFile(filepath, output) {
-  await fs.writeFile(filepath, output, err => {
-    if (err) console.log(err)
-    else {
-      console.log('File written successfully\n')
-      console.log('The written has the following contents:')
-      //console.log(fs.readFileSync(filepath, 'utf8'))
-    }
-  })
-}
+// async function writeTextFile(filepath, output) {
+//   await fs.writeFile(filepath, output, err => {
+//     if (err) console.log(err)
+//     else {
+//       console.log('File written successfully\n')
+//       console.log('The written has the following contents:')
+//       //console.log(fs.readFileSync(filepath, 'utf8'))
+//     }
+//   })
+// }
 
 async function findPullRequest(prTitle) {
   const { data: pullRequests } = await octokit.rest.pulls.list({
@@ -42178,8 +42175,8 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       tree: newTreeSha,
       parents: [latestCommitSha],
       author: {
-        name: 'Eniz Karadzha',
-        email: 'ekaradzha@quickbase.com'
+        name: owner_name,
+        email: owner_email
       }
     })
 

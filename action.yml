@@ -4,10 +4,35 @@ author: 'Your name or organization here'
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
+  solution_id:
+    description: 'ID of solution to export'
     required: true
-    default: '1000'
+  pr_title:
+    description: 'Title of the PR'
+    required: true
+    default: 'Export solution version'
+  repo:
+    description: 'Repository to create PR in'
+    required: true
+  qb_tk:
+    description: 'Quickbase user token'
+    required: true
+  qb_realm:
+    description: 'Quickbase realm name'
+    required: true
+  branch_name:
+    description: 'Branch name to create PR in'
+    required: true
+    default: 'new-solution-version'
+  owner:
+    description: 'Owner of the repository'
+    required: true
+  owner_name:
+    description: 'Owner name of the repository'
+    required: true
+  owner_email:
+    description: 'Owner email of the repository'
+    required: true
 
 # Define your outputs here.
 outputs:
