@@ -1,4 +1,5 @@
 const core = require('@actions/core')
+const { context } = require('@actions/github')
 const { Octokit } = require('octokit')
 const { rest } = new Octokit({ auth: core.getInput('gh_token') })
 
@@ -11,7 +12,7 @@ const head_branch = 'new-solution-qbl-version-' + GetHeadSurfix()
 const SOLUTION_ID = core.getInput('solution_id')
 const QB_TK = core.getInput('qb_tk')
 const QB_REALM = core.getInput('qb_realm')
-const BRANCH_NAME = core.getInput('branch_name')
+const BRANCH_NAME = core.getInput('branch_name') + GetHeadSurfix()
 const QBL_VERSION = core.getInput('qbl_version')
 const BASE_VERSION_FILENAME = 'solution.yaml'
 /**
@@ -26,7 +27,9 @@ async function run() {
       QB_REALM,
       QB_TK
     )
-
+    console.log(
+      `Context info: ${context.repo.owner}, ${context.actor}, ${context.repo}`
+    )
     await createOrUpdatePullRequest(PR_TITLE, head_branch, solutionYaml)
     core.setOutput('head_branch', head_branch)
   } catch (error) {
@@ -51,12 +54,7 @@ async function exportSolution(solutionId, qblVersion, realmHostname, qbTk) {
       headers
     }
   )
-  const result = await resp.text()
-  //await writeTextFile('solution.yaml', result)
-
-  const pr = await createOrUpdatePullRequest(PR_TITLE, BRANCH_NAME, result)
-  await uploadFileToGit(result, pr.head.ref)
-  return result
+  return await resp.text()
 }
 
 async function findPullRequest(prTitle) {
