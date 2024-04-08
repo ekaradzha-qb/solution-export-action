@@ -91,6 +91,7 @@ async function findPullRequest(prTitle) {
 }
 
 async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
+  let logMsg = ''
   try {
     info(`createOrUpdatePullRequest: ${title}, ${branchName}, yaml is here`)
     const pr = await findPullRequest(title)
@@ -98,9 +99,8 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       console.info('PR is found')
       return pr
     }
-    console.info('PR is not found')
+    logMsg = 'PR is not found'
     console.info('getting latest commit sha & treeSha')
-    info('getting latest commit sha & treeSha')
     let response = await rest.repos.listCommits({
       owner,
       repo,
@@ -110,8 +110,7 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     const latestCommitSha = response.data[0].sha
     const treeSha = response.data[0].commit.tree.sha
     console.info(`commit sha: ${latestCommitSha}, tree sha: ${treeSha}`)
-
-    console.info('creating tree')
+    logMsg = 'commit sha'
     response = await rest.git.createTree({
       owner,
       repo,
@@ -120,8 +119,7 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     })
 
     const newTreeSha = response.data.sha
-    console.info(`new tree sha: ${newTreeSha}`)
-
+    logMsg = 'creating commit'
     console.info('creating commit')
     response = await rest.git.createCommit({
       owner,
@@ -137,7 +135,7 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
 
     const newCommitSha = response.data.sha
     console.info(`new commit sha: ${newCommitSha}`)
-
+    logMsg = 'creating branch'
     console.info(`creating branch ${branchName}`)
     await rest.git.createRef({
       owner,
@@ -158,8 +156,8 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     console.error(e.message)
     console.error(`Some logs: ${title}, ${branchName}`)
     console.log(`PR failed: ${e.message}`)
-    console.info('this is  console.info')
-    info('this is  only info')
+    console.info(`soluitonId: ${SOLUTION_ID} `)
+    console.info(logMsg)
 
     return
   }
