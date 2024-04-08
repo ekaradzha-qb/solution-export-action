@@ -11,8 +11,8 @@ inputs:
 
 # Define your outputs here.
 outputs:
-  time:
-    description: 'Your output description here'
+  yaml:
+    description: 'Solution yaml'
 
 runs:
   using: node20
