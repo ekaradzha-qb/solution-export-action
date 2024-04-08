@@ -42140,7 +42140,6 @@ async function findPullRequest(prTitle) {
 async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
   let logMsg = ''
   try {
-    info(`createOrUpdatePullRequest: ${title}, ${branchName}, yaml is here`)
     const pr = await findPullRequest(title)
     if (pr) {
       console.info('PR is found')
@@ -42201,8 +42200,8 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     })
   } catch (e) {
     console.error(e.message)
-    console.error(`Some logs: ${title}, ${branchName}`)
-    console.log(`PR failed: ${e.message}`)
+    console.log(e)
+    console.log(`createOrUpdatePullRequest failed: ${e.message}`)
     console.info(`soluitonId: ${SOLUTION_ID} `)
     console.info(logMsg)
 
