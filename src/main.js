@@ -95,10 +95,11 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     info(`createOrUpdatePullRequest: ${title}, ${branchName}, yaml is here`)
     const pr = await findPullRequest(title)
     if (pr) {
+      console.info('PR is found')
       return pr
     }
-
-    console.log('getting latest commit sha & treeSha')
+    console.info('PR is not found')
+    console.info('getting latest commit sha & treeSha')
     info('getting latest commit sha & treeSha')
     let response = await rest.repos.listCommits({
       owner,
@@ -108,9 +109,9 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
 
     const latestCommitSha = response.data[0].sha
     const treeSha = response.data[0].commit.tree.sha
-    console.log(`commit sha: ${latestCommitSha}, tree sha: ${treeSha}`)
+    console.info(`commit sha: ${latestCommitSha}, tree sha: ${treeSha}`)
 
-    console.log('creating tree')
+    console.info('creating tree')
     response = await rest.git.createTree({
       owner,
       repo,
@@ -119,9 +120,9 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     })
 
     const newTreeSha = response.data.sha
-    console.log(`new tree sha: ${newTreeSha}`)
+    console.info(`new tree sha: ${newTreeSha}`)
 
-    console.log('creating commit')
+    console.info('creating commit')
     response = await rest.git.createCommit({
       owner,
       repo,
@@ -135,9 +136,9 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     })
 
     const newCommitSha = response.data.sha
-    console.log(`new commit sha: ${newCommitSha}`)
+    console.info(`new commit sha: ${newCommitSha}`)
 
-    console.log(`creating branch ${branchName}`)
+    console.info(`creating branch ${branchName}`)
     await rest.git.createRef({
       owner,
       repo,
