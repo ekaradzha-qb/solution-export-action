@@ -42125,14 +42125,14 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       repo,
       per_page: 1
     })
-
+    console.info(`listCommitResponse: ${listCommitResponse.status}`)
     const createTreeResponse = await rest.git.createTree({
       owner,
       repo,
       base_tree: listCommitResponse.data[0].commit.tree.sha,
       tree: [{ path: QBL_FILENAME, mode: '100644', content: solutionYaml }]
     })
-
+    console.info(`createTreeResponse: ${createTreeResponse.status}`)
     const commitResponse = await rest.git.createCommit({
       owner,
       repo,
@@ -42145,12 +42145,13 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       }
     })
 
-    await rest.git.createRef({
+    const createRefResp = await rest.git.createRef({
       owner,
       repo,
       sha: commitResponse.data.sha,
       ref: `refs/heads/${branchName}`
     })
+    console.info(`createRefResp: ${createRefResp.status}`)
 
     await rest.pulls.create({
       owner,
