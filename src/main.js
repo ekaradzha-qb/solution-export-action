@@ -34,6 +34,7 @@ async function run() {
       userToken
     )
 
+    await createOrUpdatePullRequest(PR_TITLE, head, solutionYaml)
     // console.debug('response of export call', solutionYaml)
     // const resp = await uploadFileToGit()
     // console.log('response of upload to git call', resp)
