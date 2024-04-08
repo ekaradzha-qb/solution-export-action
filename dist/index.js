@@ -42050,7 +42050,10 @@ const { context } = __nccwpck_require__(5438)
 const fs = __nccwpck_require__(7147)
 const { Octokit } = __nccwpck_require__(7467)
 
-const octokit = new Octokit({
+const {
+  log: { info },
+  rest
+} = new Octokit({
   auth: process.env.GITHUB_PERSONAL_TOKEN
 })
 
@@ -42124,7 +42127,7 @@ async function exportSolution(solutionId, qblVersion, realmHostname, qbTk) {
 // }
 
 async function findPullRequest(prTitle) {
-  const { data: pullRequests } = await octokit.rest.pulls.list({
+  const { data: pullRequests } = await rest.pulls.list({
     owner,
     repo
   })
@@ -42136,13 +42139,15 @@ async function findPullRequest(prTitle) {
 
 async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
   try {
+    info(`createOrUpdatePullRequest: ${title}, ${branchName}, yaml is here`)
     const pr = await findPullRequest(title)
     if (pr) {
       return pr
     }
 
     console.log('getting latest commit sha & treeSha')
-    let response = await octokit.rest.repos.listCommits({
+    info('getting latest commit sha & treeSha')
+    let response = await rest.repos.listCommits({
       owner,
       repo,
       per_page: 1
@@ -42153,7 +42158,7 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     console.log(`commit sha: ${latestCommitSha}, tree sha: ${treeSha}`)
 
     console.log('creating tree')
-    response = await octokit.rest.git.createTree({
+    response = await rest.git.createTree({
       owner,
       repo,
       base_tree: treeSha,
@@ -42164,7 +42169,7 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     console.log(`new tree sha: ${newTreeSha}`)
 
     console.log('creating commit')
-    response = await octokit.rest.git.createCommit({
+    response = await rest.git.createCommit({
       owner,
       repo,
       message: 'Commit message',
@@ -42180,14 +42185,14 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     console.log(`new commit sha: ${newCommitSha}`)
 
     console.log(`creating branch ${branchName}`)
-    await octokit.rest.git.createRef({
+    await rest.git.createRef({
       owner,
       repo,
       sha: newCommitSha,
       ref: `refs/heads/${branchName}`
     })
 
-    const create = await octokit.rest.pulls.create({
+    const create = await rest.pulls.create({
       owner,
       repo,
       head: branchName,
@@ -42206,14 +42211,14 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
 
 async function uploadFileToGit(solutionYaml, gitRef) {
   // Get reference to the latest commit in the main branch
-  const { data: refData } = await octokit.rest.git.getRef({
+  const { data: refData } = await rest.git.getRef({
     owner,
     repo,
     ref: gitRef
   })
 
   // Create a new blob with the file content
-  const { data: blobData } = await octokit.rest.git.createBlob({
+  const { data: blobData } = await rest.git.createBlob({
     owner,
     repo,
     content: solutionYaml,
@@ -42221,7 +42226,7 @@ async function uploadFileToGit(solutionYaml, gitRef) {
   })
 
   // Create a new tree with the new file
-  const { data: treeData } = await octokit.rest.git.createTree({
+  const { data: treeData } = await rest.git.createTree({
     owner,
     repo,
     base_tree: refData.object.sha,
@@ -42236,7 +42241,7 @@ async function uploadFileToGit(solutionYaml, gitRef) {
   })
 
   // Create a new commit
-  const { data: commitData } = await octokit.rest.git.createCommit({
+  const { data: commitData } = await rest.git.createCommit({
     owner,
     repo,
     message: `update solution`,
@@ -42245,7 +42250,7 @@ async function uploadFileToGit(solutionYaml, gitRef) {
   })
 
   // Update the reference to point to the new commit
-  await octokit.rest.git.updateRef({
+  await rest.git.updateRef({
     owner,
     repo,
     ref: gitRef,
