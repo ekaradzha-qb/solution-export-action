@@ -39,8 +39,8 @@ inputs:
 
 # Define your outputs here.
 outputs:
-  yaml:
-    description: 'Solution yaml'
+  head_branch:
+    description: 'Name of the branch'
 
 runs:
   using: node20

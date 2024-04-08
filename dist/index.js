@@ -41797,17 +41797,17 @@ const { Octokit } = __nccwpck_require__(7467)
 const { rest } = new Octokit({ auth: core.getInput('gh_token') })
 
 const PR_TITLE = core.getInput('pr_title')
-const repo = core.getInput('repo') //'solution-export-action'
-const owner = core.getInput('owner') //'ekaradzha-qb'
-const owner_name = core.getInput('owner_name') //'ekaradzha-qb'
-const owner_email = core.getInput('owner_email') //'ekaradzha-qb'
-const head = 'new-solution-qbl-version' // + Math.random().toString(36).substr(2, 5)
+const repo = core.getInput('repo')
+const owner = core.getInput('owner')
+const owner_name = core.getInput('owner_name')
+const owner_email = core.getInput('owner_email')
+const head_branch = 'new-solution-qbl-version-' + GetHeadSurfix()
 const SOLUTION_ID = core.getInput('solution_id')
 const QB_TK = core.getInput('qb_tk')
 const QB_REALM = core.getInput('qb_realm')
 const BRANCH_NAME = core.getInput('branch_name')
 const QBL_VERSION = core.getInput('qbl_version')
-
+const BASE_VERSION_FILENAME = 'solution.yaml'
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
@@ -41821,8 +41821,8 @@ async function run() {
       QB_TK
     )
 
-    await createOrUpdatePullRequest(PR_TITLE, head, solutionYaml)
-    core.setOutput('yaml', 'setOutput')
+    await createOrUpdatePullRequest(PR_TITLE, head_branch, solutionYaml)
+    core.setOutput('head_branch', head_branch)
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)
@@ -41853,17 +41853,6 @@ async function exportSolution(solutionId, qblVersion, realmHostname, qbTk) {
   return result
 }
 
-// async function writeTextFile(filepath, output) {
-//   await fs.writeFile(filepath, output, err => {
-//     if (err) console.log(err)
-//     else {
-//       console.log('File written successfully\n')
-//       console.log('The written has the following contents:')
-//       //console.log(fs.readFileSync(filepath, 'utf8'))
-//     }
-//   })
-// }
-
 async function findPullRequest(prTitle) {
   const { data: pullRequests } = await rest.pulls.list({
     owner,
@@ -41876,17 +41865,11 @@ async function findPullRequest(prTitle) {
 
 async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
   try {
-    try {
-      const pr = await findPullRequest(title)
-      if (pr) {
-        console.info('PR is found')
-        return pr
-      }
-    } catch (e) {
-      console.info(`PR list exc: ${e}`)
+    const pr = await findPullRequest(title)
+    if (pr) {
+      return pr
     }
 
-    console.info('getting latest commit sha & treeSha')
     let response = await rest.repos.listCommits({
       owner,
       repo,
@@ -41895,12 +41878,13 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
 
     const latestCommitSha = response.data[0].sha
     const treeSha = response.data[0].commit.tree.sha
-    console.info(`commit sha: ${latestCommitSha}, tree sha: ${treeSha}`)
     response = await rest.git.createTree({
       owner,
       repo,
       base_tree: treeSha,
-      tree: [{ path: 'solution.yaml', mode: '100644', content: solutionYaml }]
+      tree: [
+        { path: BASE_VERSION_FILENAME, mode: '100644', content: solutionYaml }
+      ]
     })
 
     const newTreeSha = response.data.sha
@@ -41917,7 +41901,6 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     })
 
     const newCommitSha = response.data.sha
-    console.info(`creating branch ${branchName}`)
     await rest.git.createRef({
       owner,
       repo,
@@ -41934,7 +41917,7 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       title
     })
   } catch (e) {
-    console.error(`createOrUpdatePullRequest failed: ${e}`)
+    console.error(`Creating PR failed: ${e}`)
     return
   }
 
@@ -41964,7 +41947,7 @@ async function uploadFileToGit(solutionYaml, gitRef) {
     base_tree: refData.object.sha,
     tree: [
       {
-        path: `solution.yaml`,
+        path: BASE_VERSION_FILENAME,
         mode: '100644',
         type: 'blob',
         sha: blobData.sha
@@ -41976,7 +41959,7 @@ async function uploadFileToGit(solutionYaml, gitRef) {
   const { data: commitData } = await rest.git.createCommit({
     owner,
     repo,
-    message: `update solution`,
+    message: `adding commit`,
     tree: treeData.sha,
     parents: [refData.object.sha]
   })
@@ -41988,6 +41971,14 @@ async function uploadFileToGit(solutionYaml, gitRef) {
     ref: gitRef,
     sha: commitData.sha
   })
+}
+
+function GetHeadSurfix() {
+  return new Date()
+    .toISOString()
+    .slice(11)
+    .replaceAll('.', '')
+    .replaceAll(':', '')
 }
 
 module.exports = {
