@@ -1,6 +1,4 @@
 const core = require('@actions/core')
-const { context } = require('@actions/github')
-const fs = require('fs')
 const { Octokit } = require('octokit')
 const { rest } = new Octokit({ auth: core.getInput('gh_token') })
 
@@ -14,6 +12,7 @@ const SOLUTION_ID = core.getInput('solution_id')
 const QB_TK = core.getInput('qb_tk')
 const QB_REALM = core.getInput('qb_realm')
 const BRANCH_NAME = core.getInput('branch_name')
+const QBL_VERSION = core.getInput('qbl_version')
 
 /**
  * The main function for the action.
@@ -23,7 +22,7 @@ async function run() {
   try {
     const solutionYaml = await exportSolution(
       SOLUTION_ID,
-      '0.2',
+      QBL_VERSION,
       QB_REALM,
       QB_TK
     )
@@ -56,9 +55,7 @@ async function exportSolution(solutionId, qblVersion, realmHostname, qbTk) {
   //await writeTextFile('solution.yaml', result)
 
   const pr = await createOrUpdatePullRequest(PR_TITLE, BRANCH_NAME, result)
-
-  const respGit = await uploadFileToGit(result, pr.head.ref)
-  console.log('response of upload to git call', respGit)
+  await uploadFileToGit(result, pr.head.ref)
   return result
 }
 
@@ -84,7 +81,6 @@ async function findPullRequest(prTitle) {
 }
 
 async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
-  let logMsg = ''
   try {
     try {
       const pr = await findPullRequest(title)
@@ -96,7 +92,6 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       console.info(`PR list exc: ${e}`)
     }
 
-    logMsg = 'PR is not found'
     console.info('getting latest commit sha & treeSha')
     let response = await rest.repos.listCommits({
       owner,
@@ -107,7 +102,6 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     const latestCommitSha = response.data[0].sha
     const treeSha = response.data[0].commit.tree.sha
     console.info(`commit sha: ${latestCommitSha}, tree sha: ${treeSha}`)
-    logMsg = 'commit sha'
     response = await rest.git.createTree({
       owner,
       repo,
@@ -116,12 +110,10 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     })
 
     const newTreeSha = response.data.sha
-    logMsg = 'creating commit'
-    console.info('creating commit')
     response = await rest.git.createCommit({
       owner,
       repo,
-      message: 'Commit message',
+      message: 'Latest QBL version',
       tree: newTreeSha,
       parents: [latestCommitSha],
       author: {
@@ -131,8 +123,6 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     })
 
     const newCommitSha = response.data.sha
-    console.info(`new commit sha: ${newCommitSha}`)
-    logMsg = 'creating branch'
     console.info(`creating branch ${branchName}`)
     await rest.git.createRef({
       owner,
@@ -141,7 +131,7 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       ref: `refs/heads/${branchName}`
     })
 
-    const create = await rest.pulls.create({
+    await rest.pulls.create({
       owner,
       repo,
       head: branchName,
@@ -150,16 +140,11 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       title
     })
   } catch (e) {
-    console.error(e.message)
-    console.log(e)
-    console.log(`createOrUpdatePullRequest failed: ${e.message}`)
-    console.log(`process.env: ${process.env.GITHUB_PERSONAL_TOKEN}`)
-    console.info(logMsg)
-
+    console.error(`createOrUpdatePullRequest failed: ${e}`)
     return
   }
 
-  console.log('PR created')
+  console.info('PR created')
 }
 
 async function uploadFileToGit(solutionYaml, gitRef) {
