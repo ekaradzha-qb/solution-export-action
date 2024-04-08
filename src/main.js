@@ -73,7 +73,7 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       return pr
     }
 
-    let listCommitResponse = await rest.repos.listCommits({
+    const listCommitResponse = await rest.repos.listCommits({
       owner,
       repo,
       per_page: 1
