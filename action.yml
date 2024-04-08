@@ -7,24 +7,9 @@ inputs:
   gh_token:
     description: 'GitHub token'
     required: true
-  solution_id:
-    description: 'ID of solution to export'
-    required: true
-  pr_title:
-    description: 'Title of the PR'
-    default: 'Export solution version'
   repo:
     description: 'Repository to create PR in'
     required: true
-  qb_tk:
-    description: 'Quickbase user token'
-    required: true
-  qb_realm:
-    description: 'Quickbase realm name'
-    required: true
-  branch_name:
-    description: 'Branch name to create PR in'
-    default: 'new-solution-version'
   owner:
     description: 'Owner of the repository'
     required: true
@@ -34,9 +19,33 @@ inputs:
   owner_email:
     description: 'Owner email of the repository'
     required: true
+  #Custom repo settings
+  pr_title:
+    description: 'Title of the PR'
+    default: 'Export solution version'
+  pr_description:
+    description: 'Description for the auto-created PR'
+    default: 'See the difference between the old and new solution QBL'
+  branch_name:
+    description: 'Branch name to create PR in'
+    default: 'new-solution-version'
+  # QBL settings
+  qb_user_token:
+    description: 'Quickbase user token'
+    required: true
+  qb_realm:
+    description: 'Quickbase realm name'
+    required: true
   qbl_version:
     description: 'Quickbase QBL version'
     default: '0.2'
+  qbl_filename:
+    description:
+      'Filename for the QBL file the will be checked in the repository'
+    default: 'solution_qbl.yaml'
+  qb_solution_id:
+    description: 'ID of solution to export'
+    required: true
 
 # Define your outputs here.
 outputs:

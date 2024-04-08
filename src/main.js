@@ -2,19 +2,20 @@ const core = require('@actions/core')
 const { context } = require('@actions/github')
 const { Octokit } = require('octokit')
 const { rest } = new Octokit({ auth: core.getInput('gh_token') })
-
-const PR_TITLE = core.getInput('pr_title')
 const repo = core.getInput('repo')
 const owner = core.getInput('owner')
-const owner_name = core.getInput('owner_name')
-const owner_email = core.getInput('owner_email')
-const head_branch = 'new-solution-qbl-version-' + GetHeadSurfix()
-const SOLUTION_ID = core.getInput('solution_id')
-const QB_TK = core.getInput('qb_tk')
+
+//Action variables
+const PR_TITLE = core.getInput('pr_title')
+const OWNER_NAME = core.getInput('owner_name')
+const OWNER_EMAIL = core.getInput('owner_email')
+const BRANCH_NAME = `${core.getInput('branch_name')}-${GetHeadSurfix()}`
+const PR_DESCRIPTION = core.getInput('pr_description')
+const QB_SOLUTION_ID = core.getInput('qb_solution_id')
+const QB_USR_TOKEN = core.getInput('qb_user_token')
 const QB_REALM = core.getInput('qb_realm')
-const BRANCH_NAME = core.getInput('branch_name') + GetHeadSurfix()
 const QBL_VERSION = core.getInput('qbl_version')
-const BASE_VERSION_FILENAME = 'solution.yaml'
+const QBL_FILENAME = core.getInput('qbl_filename')
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
@@ -22,16 +23,14 @@ const BASE_VERSION_FILENAME = 'solution.yaml'
 async function run() {
   try {
     const solutionYaml = await exportSolution(
-      SOLUTION_ID,
+      QB_SOLUTION_ID,
       QBL_VERSION,
       QB_REALM,
-      QB_TK
+      QB_USR_TOKEN
     )
-    console.log(
-      `Context info: ${context.repo.owner}, ${context.actor}, ${context.repo}`
-    )
-    await createOrUpdatePullRequest(PR_TITLE, head_branch, solutionYaml)
-    core.setOutput('head_branch', head_branch)
+
+    await createOrUpdatePullRequest(PR_TITLE, BRANCH_NAME, solutionYaml)
+    core.setOutput('branch_name', BRANCH_NAME)
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)
@@ -82,33 +81,29 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
 
     const latestCommitSha = response.data[0].sha
     const treeSha = response.data[0].commit.tree.sha
-    response = await rest.git.createTree({
+    const createTreeResponse = await rest.git.createTree({
       owner,
       repo,
       base_tree: treeSha,
-      tree: [
-        { path: BASE_VERSION_FILENAME, mode: '100644', content: solutionYaml }
-      ]
+      tree: [{ path: QBL_FILENAME, mode: '100644', content: solutionYaml }]
     })
 
-    const newTreeSha = response.data.sha
-    response = await rest.git.createCommit({
+    const commitResponse = await rest.git.createCommit({
       owner,
       repo,
       message: 'Latest QBL version',
-      tree: newTreeSha,
+      tree: createTreeResponse.data.sha,
       parents: [latestCommitSha],
       author: {
-        name: owner_name,
-        email: owner_email
+        name: OWNER_NAME,
+        email: OWNER_EMAIL
       }
     })
 
-    const newCommitSha = response.data.sha
     await rest.git.createRef({
       owner,
       repo,
-      sha: newCommitSha,
+      sha: commitResponse.data.sha,
       ref: `refs/heads/${branchName}`
     })
 
@@ -117,7 +112,7 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       repo,
       head: branchName,
       base: 'main',
-      body: 'See the difference between the old and new solution QBL',
+      body: PR_DESCRIPTION,
       title
     })
   } catch (e) {
@@ -151,7 +146,7 @@ async function uploadFileToGit(solutionYaml, gitRef) {
     base_tree: refData.object.sha,
     tree: [
       {
-        path: BASE_VERSION_FILENAME,
+        path: QBL_FILENAME,
         mode: '100644',
         type: 'blob',
         sha: blobData.sha
@@ -180,7 +175,7 @@ async function uploadFileToGit(solutionYaml, gitRef) {
 function GetHeadSurfix() {
   return new Date()
     .toISOString()
-    .slice(11)
+    .slice(10)
     .replaceAll('.', '')
     .replaceAll(':', '')
 }
