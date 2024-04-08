@@ -42051,13 +42051,8 @@ const { context } = __nccwpck_require__(5438)
 const fs = __nccwpck_require__(7147)
 const { Octokit } = __nccwpck_require__(7467)
 
-//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
-//hjghjgjhgjjghjghjghjgjjhgjg'
-
 const octokit = new Octokit({
-  //auth: process.env.TOKEN
-  // //process.env.GITHUB_PERSONAL_TOKEN
-  auth: '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'
+  auth: process.env.GITHUB_PERSONAL_TOKEN
 })
 
 const PR_TITLE = 'New solution version'
@@ -42072,13 +42067,13 @@ const head = 'new-solution-qbl-version' // + Math.random().toString(36).substr(2
  */
 async function run() {
   try {
-    const userToken = 'b6jcfp_nryt_1_d8fyfgwd7ka3575vwtm5cy332h3'
+    const solutionUTK = 'b6jcfp_nryt_1_d8fyfgwd7ka3575vwtm5cy332h3'
     const solutionId = '14b17764-d754-42e3-a5fa-2a4eaf6457d3'
     const solutionYaml = await exportSolution(
       solutionId,
       '0.2',
       'carbonprodtest',
-      userToken
+      solutionUTK
     )
 
     await createOrUpdatePullRequest(PR_TITLE, head, solutionYaml)
