@@ -81,22 +81,28 @@ async function exportSolution(solutionId, qblVersion, realmHostname, qbTk) {
 async function findPullRequest(prTitle) {
   const { data: pullRequests } = await rest.pulls.list({
     owner,
-    repo
+    repo,
+    state: 'open'
   })
 
   return pullRequests.find(
-    pr => pr.head.ref === 'main' && pr.state === 'open' && pr.title === prTitle
+    pr => pr.head.ref === 'main' && pr.title === prTitle
   )
 }
 
 async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
   let logMsg = ''
   try {
-    const pr = await findPullRequest(title)
-    if (pr) {
-      console.info('PR is found')
-      return pr
-    }
+      try {
+        const pr = await findPullRequest(title)
+        if (pr) {
+          console.info('PR is found')
+          return pr
+        }
+      }catch (e) {
+        console.info(`PR list exc: ${e}`)
+      }
+
     logMsg = 'PR is not found'
     console.info('getting latest commit sha & treeSha')
     let response = await rest.repos.listCommits({
@@ -141,15 +147,15 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       sha: newCommitSha,
       ref: `refs/heads/${branchName}`
     })
-    //
-    // const create = await rest.pulls.create({
-    //   owner,
-    //   repo,
-    //   head: branchName,
-    //   base: 'main',
-    //   body: 'See the difference between the old and new solution QBL',
-    //   title
-    // })
+
+    const create = await rest.pulls.create({
+      owner,
+      repo,
+      head: branchName,
+      base: 'main',
+      body: 'See the difference between the old and new solution QBL',
+      title
+    })
   } catch (e) {
     console.error(e.message)
     console.log(e)
