@@ -132,18 +132,18 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     const newCommitSha = response.data.sha
     console.log(`new commit sha: ${newCommitSha}`)
 
-    console.log(`creating branch ${head}`)
+    console.log(`creating branch ${branchName}`)
     await octokit.rest.git.createRef({
       owner,
       repo,
       sha: newCommitSha,
-      ref: `refs/heads/${head}`
+      ref: `refs/heads/${branchName}`
     })
 
     const create = await octokit.rest.pulls.create({
       owner,
       repo,
-      head,
+      head: branchName,
       base: MAIN,
       body: 'See the difference between the old and new solution QBL',
       title
