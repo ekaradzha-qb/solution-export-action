@@ -13,6 +13,9 @@ const octokit = new Octokit({
 const OWNER = 'ekaradzha-qb'
 const REPO = 'solution-export-action'
 const REF = 'heads/main'
+const PR_TITLE = 'New solution version'
+const BASE = 'master'
+
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
@@ -62,7 +65,10 @@ async function exportSolution(
   )
   const result = await resp.text()
   await writeTextFile('solution.yaml', result)
-  const respGit = await uploadFileToGit(result)
+
+  const pr = await createOrUpdatePullRequest(PR_TITLE)
+
+  const respGit = await uploadFileToGit(result, pr.head.ref)
   console.log('response of upload to git call', respGit)
   return result
 }
@@ -78,12 +84,39 @@ async function writeTextFile(filepath, output) {
   })
 }
 
-async function uploadFileToGit(solutionYaml) {
+async function findPullRequest(prTitle) {
+  const { data: pullRequests } = await octokit.rest.pulls.list({
+    owner: OWNER,
+    repo: REPO
+  })
+
+  return pullRequests.find(
+    pr => pr.head.ref === 'main' && pr.state === 'open' && pr.title === prTitle
+  )
+}
+
+async function createOrUpdatePullRequest(title) {
+  const pr = findPullRequest(title)
+  if (pr) {
+    return pr
+  }
+
+  await octokit.rest.pulls.create({
+    owner: OWNER,
+    repo: REPO,
+    body: 'See the difference between the old and new solution QBL',
+    title: title,
+    head: `${REPO}:new-solution-version`,
+    base: BASE
+  })
+}
+
+async function uploadFileToGit(solutionYaml, gitRef) {
   // Get reference to the latest commit in the main branch
   const { data: refData } = await octokit.rest.git.getRef({
     owner: OWNER,
     repo: REPO,
-    ref: REF
+    ref: gitRef
   })
 
   // Create a new blob with the file content
@@ -122,7 +155,7 @@ async function uploadFileToGit(solutionYaml) {
   await octokit.rest.git.updateRef({
     owner: OWNER,
     repo: REPO,
-    ref: 'heads/main',
+    ref: gitRef,
     sha: commitData.sha
   })
 
