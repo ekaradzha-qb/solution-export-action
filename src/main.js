@@ -11,7 +11,6 @@ const {
 })
 
 const PR_TITLE = core.getInput('pr_title')
-const MAIN = 'main'
 const repo = core.getInput('repo') //'solution-export-action'
 const owner = core.getInput('owner') //'ekaradzha-qb'
 const owner_name = core.getInput('owner_name') //'ekaradzha-qb'
@@ -142,20 +141,20 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       sha: newCommitSha,
       ref: `refs/heads/${branchName}`
     })
+    //
+    // const create = await rest.pulls.create({
+    //   owner,
+    //   repo,
+    //   head: branchName,
+    //   base: 'main',
+    //   body: 'See the difference between the old and new solution QBL',
+    //   title
+    // })
 
-    const create = await rest.pulls.create({
-      owner,
-      repo,
-      head: branchName,
-      base: MAIN,
-      body: 'See the difference between the old and new solution QBL',
-      title
-    })
   } catch (e) {
     console.error(e.message)
     console.log(e)
     console.log(`createOrUpdatePullRequest failed: ${e.message}`)
-    console.info(`soluitonId: ${SOLUTION_ID} `)
     console.info(logMsg)
 
     return
