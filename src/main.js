@@ -85,23 +85,21 @@ async function findPullRequest(prTitle) {
     state: 'open'
   })
 
-  return pullRequests.find(
-    pr => pr.head.ref === 'main' && pr.title === prTitle
-  )
+  return pullRequests.find(pr => pr.head.ref === 'main' && pr.title === prTitle)
 }
 
 async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
   let logMsg = ''
   try {
-      try {
-        const pr = await findPullRequest(title)
-        if (pr) {
-          console.info('PR is found')
-          return pr
-        }
-      }catch (e) {
-        console.info(`PR list exc: ${e}`)
+    try {
+      const pr = await findPullRequest(title)
+      if (pr) {
+        console.info('PR is found')
+        return pr
       }
+    } catch (e) {
+      console.info(`PR list exc: ${e}`)
+    }
 
     logMsg = 'PR is not found'
     console.info('getting latest commit sha & treeSha')
