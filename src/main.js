@@ -2,7 +2,7 @@ const core = require('@actions/core')
 const { context } = require('@actions/github')
 const fs = require('fs')
 const { Octokit } = require('octokit')
-const { rest } = new Octokit({ auth: process.env.GITHUB_PERSONAL_TOKEN })
+const { rest } = new Octokit({ auth: core.getInput('gh_token') })
 
 const PR_TITLE = core.getInput('pr_title')
 const repo = core.getInput('repo') //'solution-export-action'

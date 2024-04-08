@@ -42049,7 +42049,7 @@ const core = __nccwpck_require__(2186)
 const { context } = __nccwpck_require__(5438)
 const fs = __nccwpck_require__(7147)
 const { Octokit } = __nccwpck_require__(7467)
-const { rest } = new Octokit({ auth: process.env.GITHUB_PERSONAL_TOKEN })
+const { rest } = new Octokit({ auth: core.getInput('gh_token') })
 
 const PR_TITLE = core.getInput('pr_title')
 const repo = core.getInput('repo') //'solution-export-action'
