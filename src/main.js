@@ -157,6 +157,8 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     })
   } catch (e) {
     console.error(e.message)
+    console.log('PR failed')
+
     return
   }
   console.log('PR created')
@@ -209,21 +211,6 @@ async function uploadFileToGit(solutionYaml, gitRef) {
     ref: gitRef,
     sha: commitData.sha
   })
-
-  //   return await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
-  //   owner: 'ekaradzha-qb',
-  //   repo: 'solution-export-action',
-  //   path: '.',
-  //   message: 'my commit message',
-  //   committer: {
-  //     name: 'Adding file',
-  //     email: 'ekaradzha@quickbase.com'
-  //   },
-  //   content: 'bXkgbmV3IGZpbGUgY29udGVudHM=',
-  //   headers: {
-  //     'X-GitHub-Api-Version': '2022-11-28'
-  //   }
-  // })
 }
 
 module.exports = {
