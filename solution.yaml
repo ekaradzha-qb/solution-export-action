@@ -9,7 +9,7 @@ Resources:
     Type: QB::Application
     Properties:
       Name: GitHub Action test
-      Description: 
+      Description:
       AppColor: '#72509a'
       Manager: ekaradzha@quickbase.com
       TableOrder:
@@ -55,10 +55,10 @@ Resources:
         Type: QB::Table
         Properties:
           Name: Wow
-          Description: 
+          Description:
           RecordNameSingular: Wow
           RecordNamePlural: Wows
-          TableNameOverride: 
+          TableNameOverride:
           TableIconName: Table Header
           SaveOnExit: true
           Searchable: true
@@ -70,7 +70,7 @@ Resources:
           DefaultRecordPicker: Default
           CustomDataRules:
             TurnedOn: false
-            Formula: 
+            Formula:
           RolePermissions:
             $Role_Viewer:
               CanAddRecords: false
@@ -104,7 +104,7 @@ Resources:
             Type: QB::Field::Text
             Id: 6
             Properties:
-              DefaultValue: 
+              DefaultValue:
               MaxLength: 0
               Width: 0
               EditHistory:
@@ -124,7 +124,7 @@ Resources:
                 InputType: UserInput
               IsRequired: false
               IsUnique: false
-              HelpText: 
+              HelpText:
               AllowDataCopy: true
           $Field_Date_Created:
             Type: QB::Field::DateCreated
@@ -162,7 +162,7 @@ Resources:
             Type: QB::Field::RecordID
             Id: 3
             Properties:
-              Units: 
+              Units:
               NumberFormat:
                 SeparatorStyle: CommaGroupingPeriodDecimal
                 SeparatorPlaces: none
@@ -200,7 +200,7 @@ Resources:
         Type: QB::Application::Role
         Properties:
           Name: Viewer
-          Description: 
+          Description:
           Default: false
           ManageUsers: false
           EditApp: false
@@ -227,7 +227,7 @@ Resources:
         Type: QB::Application::Role
         Properties:
           Name: Participant
-          Description: 
+          Description:
           Default: true
           ManageUsers: true
           EditApp: false
@@ -254,7 +254,7 @@ Resources:
         Type: QB::Application::Role
         Properties:
           Name: Administrator
-          Description: 
+          Description:
           Default: false
           ManageUsers: true
           EditApp: true
