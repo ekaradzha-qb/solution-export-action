@@ -150,7 +150,6 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     //   body: 'See the difference between the old and new solution QBL',
     //   title
     // })
-
   } catch (e) {
     console.error(e.message)
     console.log(e)
