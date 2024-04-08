@@ -42049,13 +42049,7 @@ const core = __nccwpck_require__(2186)
 const { context } = __nccwpck_require__(5438)
 const fs = __nccwpck_require__(7147)
 const { Octokit } = __nccwpck_require__(7467)
-
-const {
-  log: { info },
-  rest
-} = new Octokit({
-  auth: process.env.GITHUB_PERSONAL_TOKEN
-})
+const { rest } = new Octokit({ auth: process.env.GITHUB_PERSONAL_TOKEN })
 
 const PR_TITLE = core.getInput('pr_title')
 const repo = core.getInput('repo') //'solution-export-action'
@@ -42067,6 +42061,7 @@ const SOLUTION_ID = core.getInput('solution_id')
 const QB_TK = core.getInput('qb_tk')
 const QB_REALM = core.getInput('qb_realm')
 const BRANCH_NAME = core.getInput('branch_name')
+
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
@@ -42205,6 +42200,7 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
     console.error(e.message)
     console.log(e)
     console.log(`createOrUpdatePullRequest failed: ${e.message}`)
+    console.log(`process.env: ${process.env.GITHUB_PERSONAL_TOKEN}`)
     console.info(logMsg)
 
     return
