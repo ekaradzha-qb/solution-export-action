@@ -78,6 +78,7 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       repo,
       per_page: 1
     })
+
     console.info(`listCommitResponse: ${listCommitResponse.status}`)
     const createTreeResponse = await rest.git.createTree({
       owner,
