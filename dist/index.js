@@ -42132,8 +42132,8 @@ async function writeTextFile(filepath, output) {
 
 async function findPullRequest(prTitle) {
   const { data: pullRequests } = await octokit.rest.pulls.list({
-    owner: owner,
-    repo: repo
+    owner,
+    repo
   })
 
   return pullRequests.find(
@@ -42200,7 +42200,7 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       head,
       base: MAIN,
       body: 'See the difference between the old and new solution QBL',
-      title: title
+      title
     })
   } catch (e) {
     console.error(e.message)
@@ -42212,23 +42212,23 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
 async function uploadFileToGit(solutionYaml, gitRef) {
   // Get reference to the latest commit in the main branch
   const { data: refData } = await octokit.rest.git.getRef({
-    owner: owner,
-    repo: repo,
+    owner,
+    repo,
     ref: gitRef
   })
 
   // Create a new blob with the file content
   const { data: blobData } = await octokit.rest.git.createBlob({
-    owner: owner,
-    repo: repo,
+    owner,
+    repo,
     content: solutionYaml,
     encoding: 'utf-8'
   })
 
   // Create a new tree with the new file
   const { data: treeData } = await octokit.rest.git.createTree({
-    owner: owner,
-    repo: repo,
+    owner,
+    repo,
     base_tree: refData.object.sha,
     tree: [
       {
@@ -42242,8 +42242,8 @@ async function uploadFileToGit(solutionYaml, gitRef) {
 
   // Create a new commit
   const { data: commitData } = await octokit.rest.git.createCommit({
-    owner: owner,
-    repo: repo,
+    owner,
+    repo,
     message: `update solution`,
     tree: treeData.sha,
     parents: [refData.object.sha]
@@ -42251,8 +42251,8 @@ async function uploadFileToGit(solutionYaml, gitRef) {
 
   // Update the reference to point to the new commit
   await octokit.rest.git.updateRef({
-    owner: owner,
-    repo: repo,
+    owner,
+    repo,
     ref: gitRef,
     sha: commitData.sha
   })
