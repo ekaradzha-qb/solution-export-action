@@ -2,10 +2,10 @@ const core = require('@actions/core')
 const { context } = require('@actions/github')
 const { Octokit } = require('octokit')
 const { rest } = new Octokit({ auth: core.getInput('gh_token') })
-const repo = core.getInput('repo')
-const owner = core.getInput('owner')
 
 //Action variables
+const repo = context.repo.repo
+const owner = context.repo.owner
 const PR_TITLE = core.getInput('pr_title')
 const OWNER_NAME = core.getInput('owner_name')
 const OWNER_EMAIL = core.getInput('owner_email')
