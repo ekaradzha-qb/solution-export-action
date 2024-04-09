@@ -2,6 +2,12 @@ name: 'The name of your action here'
 description: 'Provide a description here'
 author: 'Your name or organization here'
 
+permissions:
+  actions: read|write
+  contents: read|write
+  pull-requests: read|write
+  statuses: read|write
+
 # Define your inputs here.
 inputs:
   gh_token:
