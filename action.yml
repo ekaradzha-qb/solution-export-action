@@ -1,6 +1,6 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Solution Export PR'
+description: 'Exports a Quickbase Solution and creates a PR in a GitHub repository'
+author: 'ekaradzha@quickbase.com'
 
 # Define your inputs here.
 inputs:
