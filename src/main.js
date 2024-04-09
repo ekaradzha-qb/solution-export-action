@@ -105,6 +105,8 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       )
       return 1
     }
+    console.info(createTreeResponse.text)
+    console.info(createTreeResponse.status)
 
     const commitResponse = await rest.git.createCommit({
       owner,
