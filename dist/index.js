@@ -42132,11 +42132,11 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       per_page: 1
     })
 
-    if (listCommitResponse.status !== '200') {
+    if (listCommitResponse.status !== 200) {
       console.error(
         `Can't list commits. Status code: ${listCommitResponse.status}`
       )
-      return -1
+      return 1
     }
 
     const createTreeResponse = await rest.git.createTree({
@@ -42146,11 +42146,11 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       tree: [{ path: QBL_FILENAME, mode: '100644', content: solutionYaml }]
     })
 
-    if (createTreeResponse.status !== '201') {
+    if (createTreeResponse.status !== 201) {
       console.error(
         `Can't create a tree. Status code: ${createTreeResponse.status}`
       )
-      return -1
+      return 1
     }
 
     const commitResponse = await rest.git.createCommit({
@@ -42165,11 +42165,11 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       }
     })
 
-    if (commitResponse.status !== '201') {
+    if (commitResponse.status !== 201) {
       console.error(
         `Can't create a commit. Status code: ${commitResponse.status}`
       )
-      return -1
+      return 1
     }
 
     const createRefResp = await rest.git.createRef({
@@ -42179,9 +42179,9 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       ref: `refs/heads/${branchName}`
     })
 
-    if (createRefResp.status !== '201') {
+    if (createRefResp.status !== 201) {
       console.error(`Can't create a ref. Status code: ${createRefResp.status}`)
-      return -1
+      return 1
     }
 
     const createPRResponse = await rest.pulls.create({
@@ -42193,11 +42193,11 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       title
     })
 
-    if (createPRResponse.status !== '201') {
+    if (createPRResponse.status !== 201) {
       console.error(
         `Can't create a PR. Status code: ${createPRResponse.status}`
       )
-      return -1
+      return 1
     }
   } catch (e) {
     console.error(`Creating PR failed with unexpected error: ${e}`)
