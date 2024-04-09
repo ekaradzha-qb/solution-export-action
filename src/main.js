@@ -11,7 +11,7 @@ const OWNER_EMAIL = core.getInput('owner_email')
 const BRANCH_NAME = core.getInput('branch_name')
 const PR_TITLE = core.getInput('pr_title')
 const PR_DESCRIPTION = core.getInput('pr_description')
-const QB_SOLUTION_ID = core.getInput('qb_solution_id_to_export')
+const QB_SOLUTION_ID = core.getInput('qb_solution_id')
 const QB_USR_TOKEN = core.getInput('qb_user_token')
 const QB_REALM = core.getInput('qb_realm')
 const QBL_VERSION = core.getInput('qbl_version')
@@ -105,8 +105,6 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       )
       return 1
     }
-    console.info(createTreeResponse.text)
-    console.info(createTreeResponse.status)
 
     const commitResponse = await rest.git.createCommit({
       owner,
