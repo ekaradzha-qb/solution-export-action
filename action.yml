@@ -7,12 +7,6 @@ inputs:
   gh_token:
     description: 'GitHub token'
     required: true
-  repo:
-    description: 'Repository to create PR in'
-    required: true
-  owner:
-    description: 'Owner of the repository'
-    required: true
   owner_name:
     description: 'Owner name of the repository'
     required: true
