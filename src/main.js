@@ -8,8 +8,8 @@ const repo = context.repo.repo
 const owner = context.repo.owner
 const OWNER_NAME = core.getInput('owner_name')
 const OWNER_EMAIL = core.getInput('owner_email')
-const BRANCH_NAME = `${core.getInput('branch_name')}-${GetTimeSurrfix()}`
-const PR_TITLE = `${core.getInput('pr_title')}-${GetTimeSurrfix()}`
+const BRANCH_NAME = core.getInput('branch_name')
+const PR_TITLE = core.getInput('pr_title')
 const PR_DESCRIPTION = core.getInput('pr_description')
 const QB_SOLUTION_ID = core.getInput('qb_solution_id')
 const QB_USR_TOKEN = core.getInput('qb_user_token')
@@ -30,7 +30,12 @@ async function run() {
       QB_USR_TOKEN
     )
 
-    await createOrUpdatePullRequest(PR_TITLE, BRANCH_NAME, solutionYaml)
+    //Add some uniqueness to the PR title and branch name
+    const suffix = GetTimeSurrfix()
+    const pr_title = `${PR_TITLE} - ${suffix}`
+    const branch_name = `${BRANCH_NAME} - ${suffix}`
+
+    await createOrUpdatePullRequest(pr_title, branch_name, solutionYaml)
     core.setOutput('branch_name', BRANCH_NAME)
   } catch (error) {
     // Fail the workflow run if an error occurs
