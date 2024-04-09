@@ -8,8 +8,8 @@ const repo = context.repo.repo
 const owner = context.repo.owner
 const OWNER_NAME = core.getInput('owner_name')
 const OWNER_EMAIL = core.getInput('owner_email')
-const BRANCH_NAME = `${core.getInput('branch_name')}-${GetHeadSurfix()}`
-const PR_TITLE = core.getInput('pr_title')
+const BRANCH_NAME = `${core.getInput('branch_name')}-${GetTimeSurrfix()}`
+const PR_TITLE = `${core.getInput('pr_title')}-${GetTimeSurrfix()}`
 const PR_DESCRIPTION = core.getInput('pr_description')
 const QB_SOLUTION_ID = core.getInput('qb_solution_id')
 const QB_USR_TOKEN = core.getInput('qb_user_token')
@@ -124,10 +124,10 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
   console.info('PR created')
 }
 
-function GetHeadSurfix() {
+function GetTimeSurrfix() {
   return new Date()
     .toISOString()
-    .slice(10)
+    .slice(11, 23)
     .replaceAll('.', '')
     .replaceAll(':', '')
 }
