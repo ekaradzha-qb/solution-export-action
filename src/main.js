@@ -16,6 +16,7 @@ const QB_USR_TOKEN = core.getInput('qb_user_token')
 const QB_REALM = core.getInput('qb_realm')
 const QBL_VERSION = core.getInput('qbl_version')
 const QBL_FILENAME = core.getInput('qbl_filename')
+
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
@@ -92,7 +93,11 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       repo,
       message: 'Latest QBL version',
       tree: createTreeResponse.data.sha,
-      parents: [listCommitResponse.data[0].sha]
+      parents: [listCommitResponse.data[0].sha],
+      author: {
+        name: OWNER_NAME,
+        email: OWNER_EMAIL
+      }
     })
 
     const createRefResp = await rest.git.createRef({

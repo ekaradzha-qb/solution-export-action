@@ -42049,10 +42049,10 @@ const core = __nccwpck_require__(2186)
 const { context } = __nccwpck_require__(5438)
 const { Octokit } = __nccwpck_require__(7467)
 const { rest } = new Octokit({ auth: core.getInput('gh_token') })
-const repo = core.getInput('repo')
-const owner = core.getInput('owner')
 
 //Action variables
+const repo = context.repo.repo
+const owner = context.repo.owner
 const OWNER_NAME = core.getInput('owner_name')
 const OWNER_EMAIL = core.getInput('owner_email')
 const BRANCH_NAME = `${core.getInput('branch_name')}-${GetHeadSurfix()}`
@@ -42063,6 +42063,7 @@ const QB_USR_TOKEN = core.getInput('qb_user_token')
 const QB_REALM = core.getInput('qb_realm')
 const QBL_VERSION = core.getInput('qbl_version')
 const QBL_FILENAME = core.getInput('qbl_filename')
+
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
@@ -42139,7 +42140,11 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       repo,
       message: 'Latest QBL version',
       tree: createTreeResponse.data.sha,
-      parents: [listCommitResponse.data[0].sha]
+      parents: [listCommitResponse.data[0].sha],
+      author: {
+        name: OWNER_NAME,
+        email: OWNER_EMAIL
+      }
     })
 
     const createRefResp = await rest.git.createRef({
