@@ -1,5 +1,6 @@
 name: 'Solution Export PR'
-description: 'Exports a Quickbase Solution and creates a PR in a GitHub repository'
+description:
+  'Exports a Quickbase Solution and creates a PR in a GitHub repository'
 author: 'ekaradzha@quickbase.com'
 
 # Define your inputs here.
