@@ -6,10 +6,10 @@ const repo = core.getInput('repo')
 const owner = core.getInput('owner')
 
 //Action variables
-const PR_TITLE = core.getInput('pr_title')
 const OWNER_NAME = core.getInput('owner_name')
 const OWNER_EMAIL = core.getInput('owner_email')
 const BRANCH_NAME = `${core.getInput('branch_name')}-${GetHeadSurfix()}`
+const PR_TITLE = core.getInput('pr_title')
 const PR_DESCRIPTION = core.getInput('pr_description')
 const QB_SOLUTION_ID = core.getInput('qb_solution_id')
 const QB_USR_TOKEN = core.getInput('qb_user_token')
@@ -92,11 +92,7 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       repo,
       message: 'Latest QBL version',
       tree: createTreeResponse.data.sha,
-      parents: [listCommitResponse.data[0].sha],
-      author: {
-        name: OWNER_NAME,
-        email: OWNER_EMAIL
-      }
+      parents: [listCommitResponse.data[0].sha]
     })
 
     const createRefResp = await rest.git.createRef({
