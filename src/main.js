@@ -31,7 +31,7 @@ async function run() {
     )
 
     //Add some uniqueness to the PR title and branch name
-    const suffix = GetTimeSurrfix()
+    const suffix = GetRandomSuffix()
     const pr_title = `${PR_TITLE} - ${suffix}`
     const branch_name = `${BRANCH_NAME}_${suffix}`
 
@@ -160,12 +160,15 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
   console.info(`PR: ${title} with branch ${branchName} is created.`)
 }
 
-function GetTimeSurrfix() {
-  return new Date()
-    .toISOString()
-    .slice(11, 23)
-    .replaceAll('.', '')
-    .replaceAll(':', '')
+function GetRandomSuffix() {
+  return (
+    String.fromCharCode(65 + Math.floor(Math.random() * 26)) +
+    new Date()
+      .toISOString()
+      .slice(18, 23)
+      .replaceAll('.', '')
+      .replaceAll(':', '')
+  )
 }
 
 module.exports = { run }
