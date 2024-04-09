@@ -32,7 +32,7 @@ async function run() {
 
     //Add some uniqueness to the PR title and branch name
     const suffix = GetRandomSuffix()
-    const pr_title = `${PR_TITLE} - ${suffix}`
+    const pr_title = `[${suffix}] ${PR_TITLE}`
     const branch_name = `${BRANCH_NAME}_${suffix}`
 
     await createOrUpdatePullRequest(pr_title, branch_name, solutionYaml)
