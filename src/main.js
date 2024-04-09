@@ -33,7 +33,7 @@ async function run() {
     //Add some uniqueness to the PR title and branch name
     const suffix = GetTimeSurrfix()
     const pr_title = `${PR_TITLE} - ${suffix}`
-    const branch_name = `${BRANCH_NAME} - ${suffix}`
+    const branch_name = `${BRANCH_NAME}_${suffix}`
 
     await createOrUpdatePullRequest(pr_title, branch_name, solutionYaml)
     core.setOutput('branch_name', BRANCH_NAME)
@@ -85,14 +85,27 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       per_page: 1
     })
 
-    console.info(`listCommitResponse: ${listCommitResponse.status}`)
+    if (listCommitResponse.status !== '200') {
+      console.error(
+        `Can't list commits. Status code: ${listCommitResponse.status}`
+      )
+      return -1
+    }
+
     const createTreeResponse = await rest.git.createTree({
       owner,
       repo,
       base_tree: listCommitResponse.data[0].commit.tree.sha,
       tree: [{ path: QBL_FILENAME, mode: '100644', content: solutionYaml }]
     })
-    console.info(`createTreeResponse: ${createTreeResponse.status}`)
+
+    if (createTreeResponse.status !== '201') {
+      console.error(
+        `Can't create a tree. Status code: ${createTreeResponse.status}`
+      )
+      return -1
+    }
+
     const commitResponse = await rest.git.createCommit({
       owner,
       repo,
@@ -105,15 +118,26 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       }
     })
 
+    if (commitResponse.status !== '201') {
+      console.error(
+        `Can't create a commit. Status code: ${commitResponse.status}`
+      )
+      return -1
+    }
+
     const createRefResp = await rest.git.createRef({
       owner,
       repo,
       sha: commitResponse.data.sha,
       ref: `refs/heads/${branchName}`
     })
-    console.info(`createRefResp: ${createRefResp.status}`)
 
-    await rest.pulls.create({
+    if (createRefResp.status !== '201') {
+      console.error(`Can't create a ref. Status code: ${createRefResp.status}`)
+      return -1
+    }
+
+    const createPRResponse = await rest.pulls.create({
       owner,
       repo,
       head: branchName,
@@ -121,12 +145,19 @@ async function createOrUpdatePullRequest(title, branchName, solutionYaml) {
       body: PR_DESCRIPTION,
       title
     })
+
+    if (createPRResponse.status !== '201') {
+      console.error(
+        `Can't create a PR. Status code: ${createPRResponse.status}`
+      )
+      return -1
+    }
   } catch (e) {
-    console.error(`Creating PR failed: ${e}`)
+    console.error(`Creating PR failed with unexpected error: ${e}`)
     return
   }
 
-  console.info('PR created')
+  console.info(`PR: ${title} with branch ${branchName} is created.`)
 }
 
 function GetTimeSurrfix() {
@@ -137,7 +168,4 @@ function GetTimeSurrfix() {
     .replaceAll(':', '')
 }
 
-module.exports = {
-  run,
-  exportSolution
-}
+module.exports = { run }
