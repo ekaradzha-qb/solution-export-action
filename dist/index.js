@@ -42049,10 +42049,10 @@ const core = __nccwpck_require__(2186)
 const { context } = __nccwpck_require__(5438)
 const { Octokit } = __nccwpck_require__(7467)
 const { rest } = new Octokit({ auth: core.getInput('gh_token') })
-const repo = core.getInput('repo')
-const owner = core.getInput('owner')
 
 //Action variables
+const repo = context.repo.repo
+const owner = context.repo.owner
 const PR_TITLE = core.getInput('pr_title')
 const OWNER_NAME = core.getInput('owner_name')
 const OWNER_EMAIL = core.getInput('owner_email')
