@@ -16,21 +16,19 @@ You can set your own steps in the workflow file to run the action.
 
 ## Inputs
 
-## Inputs
-
 This action requires the following inputs:
 
 - `gh_token`: Your GitHub token. This is required for authentication purposes.
 - `owner_name`: The name of the repository owner. This is required.
 - `owner_email`: The email of the repository owner. This is required.
 
-### Custom Repository Settings
+#### Custom Repository Settings
 
 - `pr_title`: The title of the Pull Request. By default, this is set to 'Export solution version'.
 - `pr_description`: The description for the auto-created Pull Request. By default, this is set to 'See the difference between the old and new solution QBL'.
 - `branch_name`: The name of the branch where the Pull Request will be created. By default, this is set to 'new-solution-version'.
 
-### Quickbase Solution (QBL) Settings
+#### Quickbase Solution (QBL) Settings
 
 - `qb_user_token`: Your Quickbase user token. This is required for authentication purposes.
 - `qb_realm`: The name of your Quickbase realm. This is required.
